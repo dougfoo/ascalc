@@ -7,19 +7,19 @@ class Resource(models.Model):
     def __str__(self):
         return self.role
 
-    nameid = models.CharField(max_length=200)
+    resource_name = models.CharField(max_length=200)
     role = models.CharField(max_length=200)
     title = models.CharField(max_length=200)
 
 
 class Bundle(models.Model):
     class Meta:
-        ordering = ['nameid']
+        ordering = ['bundle_name']
     
     def __str__(self):
-        return self.nameid
+        return self.bundle_name
 
-    nameid = models.CharField(max_length=200)
+    bundle_name = models.CharField(max_length=200)
     size = models.CharField(max_length=50)
     months = models.IntegerField(default=0)
     resources = models.ManyToManyField(Resource)

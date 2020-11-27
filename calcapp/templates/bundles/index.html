@@ -1,0 +1,18 @@
+{% if latest_bundle_list %}
+<p>
+    <h2>Bundles available:</h2>
+<p>
+    <ul>
+    {% for bundle in latest_bundle_list %}
+        <li><a href="/calcapp/{{ bundle.resources }}/bundle">{{ bundle.bundle_name }}</a></li>
+          Resources
+        <ul>
+        {% for resource in bundle.resources.all %}
+            <li>{{resource.resource_name}} -  <a href="/calcapp/{{ resource }}/resource">{{ resource }}</a></li>            
+        {% endfor %}
+        </ul>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No bundles are available.</p>
+{% endif %}
