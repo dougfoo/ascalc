@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import loader
-
+from rest_framework import viewsets
+from rest_framework import permissions
 from .models import Bundle, Resource
+from .serializers import BundleSerializer, ResourceSerializer
 
 
 # def index(request):
@@ -19,3 +21,14 @@ def index(request):
     latest = Bundle.objects.all()[:5]
     context = {'latest_bundle_list': latest }
     return render(request, 'bundles/index.html', context)
+
+class BundleViewSet(viewsets.ModelViewSet):
+    queryset = Bundle.objects.all()
+    serializer_class = BundleSerializer
+#    permission_classes = [permissions.IsAuthenticated]
+
+
+class ResourceViewSet(viewsets.ModelViewSet):
+    queryset = Resource.objects.all()
+    serializer_class = ResourceSerializer
+#    permission_classes = [permissions.IsAuthenticated]
