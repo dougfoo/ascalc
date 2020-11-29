@@ -12,7 +12,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("/calcapp/bundles/")
+    // const restServer = "/calcapp/bundles/";
+    const restServer = "http://localhost:8000/calcapp/bundles/"
+    fetch(restServer)
       .then(response => {
         if (response.status > 400) {
           console.log(">400");
@@ -41,7 +43,7 @@ class App extends Component {
         {this.state.data.map(bundle => {
           return (
             <li key={bundle.name}>
-              {bundle.months} - {bundle.size} and add resources after via https://www.valentinog.com/blog/drf/
+              Name: {bundle.name} - Months: {bundle.months} - Size: {bundle.size} - Resources: {bundle.resources}
             </li>
           );
         })}
@@ -52,5 +54,5 @@ class App extends Component {
 
 export default App;
 
-const container = document.getElementById("app");
-render(<App />, container);
+// const container = document.getElementById("app");
+// render(<App />, container);
