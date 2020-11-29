@@ -12,14 +12,18 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("calcapp/bundles")
+    fetch("/calcapp/bundles/")
       .then(response => {
         if (response.status > 400) {
+          console.log(">400");
           return this.setState(() => {
             return { placeholder: "Something went wrong!" };
           });
         }
-        return response.json();
+        else {
+          console.log("got response: " + response)
+          return response.json();
+        }
       })
       .then(data => {
         this.setState(() => {
