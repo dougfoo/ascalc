@@ -7,24 +7,26 @@ class Resource(models.Model):
     def __str__(self):
         return self.role
 
-    resource_name = models.CharField(max_length=200)
-    role = models.CharField(max_length=200)
-    title = models.CharField(max_length=200)
-
+    role = models.CharField(max_length=50)
+    title = models.CharField(max_length=50)
+    perdiem = models.IntegerField(default=150000)
 
 class Bundle(models.Model):
     class Meta:
-        ordering = ['bundle_name']
+        ordering = ['name']
     
     def __str__(self):
-        return self.bundle_name
+        return self.name
 
-    bundle_name = models.CharField(max_length=200)
+    name = models.CharField(max_length=50)
     size = models.CharField(max_length=50)
-    months = models.IntegerField(default=0)
-    resources = models.ManyToManyField(Resource)
-#    pm = models.ForeignKey(Resource, on_delete=models.CASCADE)
-#    de = models.ForeignKey(Resource, on_delete=models.CASCADE)
-#    ds = models.ForeignKey(Resource, on_delete=models.CASCADE)
-#    ap = models.ForeignKey(Resource, on_delete=models.CASCADE)
+    months = models.IntegerField(default=3)
+    members = models.ManyToManyField(Resource, through='Membership')
 
+class Membership(models.Model):
+    resource = models.ForeignKey(Resource, on_delete=models.CASCADE)
+    bundle = models.ForeignKey(Bundle, on_delete=models.CASCADE)
+    allocation = models.FloatField(default=0.4)
+
+    def __str__(self):
+        return 'membership'

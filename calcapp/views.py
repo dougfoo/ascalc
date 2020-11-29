@@ -10,12 +10,12 @@ from .serializers import BundleSerializer, ResourceSerializer
 # def index(request):
 #     return HttpResponse("Hello, world. You're at the calcapp index.")
 
-def bundle(request, bundle_name):
-    return HttpResponse("You're looking at bundle %s." % bundle_name)
+# # def bundle(request, bundle_name):
+# #     return HttpResponse("You're looking at bundle %s." % bundle_name)
 
-def resource(request, resource_name):
-    response = "You're looking at the resource %s."
-    return HttpResponse(response % resource_name)
+# # def resource(request, resource_name):
+# #     response = "You're looking at the resource %s."
+# #     return HttpResponse(response % resource_name)
 
 def index(request):
     latest = Bundle.objects.all()[:5]
@@ -25,10 +25,12 @@ def index(request):
 class BundleViewSet(viewsets.ModelViewSet):
     queryset = Bundle.objects.all()
     serializer_class = BundleSerializer
+    lookup_field = 'name'
 #    permission_classes = [permissions.IsAuthenticated]
 
 
 class ResourceViewSet(viewsets.ModelViewSet):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
+#    lookup_field = 'role'   # does'nt work if using hyperlinked
 #    permission_classes = [permissions.IsAuthenticated]
