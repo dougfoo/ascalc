@@ -5,6 +5,7 @@ from . import views
 router = routers.DefaultRouter()
 router.register(r'bundles', views.BundleViewSet)
 router.register(r'resources', views.ResourceViewSet)
+router.register(r'projects', views.ProjectViewSet)
 
 urlpatterns = [
     path('', views.index, name='index'),

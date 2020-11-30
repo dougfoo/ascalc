@@ -3,8 +3,8 @@ from django.http import HttpResponse
 from django.template import loader
 from rest_framework import viewsets
 from rest_framework import permissions
-from .models import Bundle, Resource
-from .serializers import BundleSerializer, ResourceSerializer
+from .models import Bundle, Resource, Project
+from .serializers import BundleSerializer, ResourceSerializer, ProjectSerializer
 
 
 # def index(request):
@@ -28,9 +28,14 @@ class BundleViewSet(viewsets.ModelViewSet):
     lookup_field = 'name'
 #    permission_classes = [permissions.IsAuthenticated]
 
-
 class ResourceViewSet(viewsets.ModelViewSet):
     queryset = Resource.objects.all()
     serializer_class = ResourceSerializer
 #    lookup_field = 'role'   # does'nt work if using hyperlinked
+#    permission_classes = [permissions.IsAuthenticated]
+
+class ProjectViewSet(viewsets.ModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
+    lookup_field = 'name'   # does'nt work if using hyperlinked
 #    permission_classes = [permissions.IsAuthenticated]

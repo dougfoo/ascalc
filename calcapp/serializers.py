@@ -1,4 +1,4 @@
-from .models import Bundle, Resource
+from .models import Bundle, Resource, Project
 from rest_framework import serializers
 
 class ResourceSerializer(serializers.HyperlinkedModelSerializer):
@@ -9,7 +9,14 @@ class ResourceSerializer(serializers.HyperlinkedModelSerializer):
 class BundleSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Bundle
-#        resources = ResourceSerializer(read_only=True, many=True)
         fields = ['name', 'size', 'months', 'members']
+        depth = 2   # expand the resources block
+
+class ProjectSerializer(serializers.HyperlinkedModelSerializer):
+    bundle = BundleSerializer()
+
+    class Meta:
+        model = Project
+        fields = ['name', 'start_date', 'bundle']
         depth = 2   # expand the resources block
 

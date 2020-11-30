@@ -30,3 +30,17 @@ class Membership(models.Model):
 
     def __str__(self):
         return 'membership'
+
+class Project(models.Model):
+    class Meta:
+        ordering = ['start_date']
+    
+    def __str__(self):
+        return str(self.start_date)
+
+    start_date = models.DateField(auto_now=False)
+    active = models.BooleanField(True)
+    name = models.CharField(max_length=200)
+    bundle = models.ForeignKey(Bundle, on_delete=models.CASCADE)
+ 
+# add a forecast?  Its just a collection of projects for a date
