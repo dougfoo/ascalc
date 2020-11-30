@@ -6,7 +6,9 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import Grid from "@material-ui/core/Grid";
 import Topbar from "./Topbar";
-import SimpleReactivePieChart from "./SimpleReactivePieChart";
+import ResourceTable from "./ResourceTable";
+import BundleTable from "./BundleTable";
+import ProjectTable from "./ProjectTable";
 import SimpleReactiveBarChart from "./SimpleReactiveBarChart";
 import ResponsiveContainer from 'recharts/lib/component/ResponsiveContainer';
 import Radio from '@material-ui/core/Radio';
@@ -162,41 +164,29 @@ class Main extends Component {
         <div className={classes.root}>
           <Grid container justify="center">
             <Grid spacing={2} alignItems="center" justify="center" container className={classes.grid}>             
-              <Grid item xs={4} md={2}>
-                <Paper className={classes.paper}>
-                  <div className={classes.box}>
-                    <Typography style={{ textTransform: "uppercase" }} color="secondary" gutterBottom>
-                      Projects
-                    </Typography>
-                    <Typography variant="body2" display="inline">
-                    {this.state.asdata.map(h => <div>{h.name}</div>)}
-                    </Typography>
-                  </div>
-                </Paper>
+            <Grid item xs={12} md={6}>
+                <div>
+                  <Typography style={{ textTransform: "uppercase" }} color="secondary" gutterBottom>
+                    Projects
+                  </Typography>
+                  <ProjectTable rows={this.state.asdata}/>
+                </div>
               </Grid>
-              <Grid item xs={4} md={2}>
-                <Paper className={classes.paper}>
-                  <div className={classes.box}>
-                    <Typography style={{ textTransform: "uppercase" }} color="secondary" gutterBottom>
-                      Bundles
-                    </Typography>
-                    <Typography variant="body2" gutterBottom display="inline">
-                    {this.state.asdata2.map(h => <div>{h.name}</div>)}
-                    </Typography>
-                  </div>
-                </Paper>
+              <Grid item xs={8} md={4}>
+                <div>
+                  <Typography style={{ textTransform: "uppercase" }} color="secondary" gutterBottom>
+                    Bundles
+                  </Typography>
+                  <BundleTable rows={this.state.asdata2}/>
+                </div>
               </Grid>
-              <Grid item xs={4} md={2}>
-                <Paper className={classes.paper}>
-                  <div className={classes.box}>
-                    <Typography style={{ textTransform: "uppercase" }} color="secondary" gutterBottom>
+              <Grid item xs={8} md={4}>
+                <div>
+                  <Typography style={{ textTransform: "uppercase" }} color="secondary" gutterBottom>
                     Resources
-                    </Typography>
-                    <Typography variant="body2" gutterBottom>
-                    {this.state.asdata3.map(h => <div>{h.role}</div>)}
-                    </Typography>
-                  </div>
-                </Paper>
+                  </Typography>
+                  <ResourceTable rows={this.state.asdata3}/>
+                </div>
               </Grid>
               <Grid container item xs={12}>
                 <Grid item xs={12}>
