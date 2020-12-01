@@ -1,26 +1,28 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from django.template import loader
 from rest_framework import viewsets
 from rest_framework import permissions
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.parsers import JSONParser
 from .models import Bundle, Resource, Project
-from .serializers import BundleSerializer, ResourceSerializer, ProjectSerializer
-
-
-# def index(request):
-#     return HttpResponse("Hello, world. You're at the calcapp index.")
-
-# # def bundle(request, bundle_name):
-# #     return HttpResponse("You're looking at bundle %s." % bundle_name)
-
-# # def resource(request, resource_name):
-# #     response = "You're looking at the resource %s."
-# #     return HttpResponse(response % resource_name)
+from .serializers import BundleSerializer, ResourceSerializer, ProjectSerializer, PlistSerializer
 
 def index(request):
     latest = Bundle.objects.all()[:5]
     context = {'latest_bundle_list': latest }
     return render(request, 'bundles/index.html', context)
+
+@csrf_exempt
+def plist(request):
+    if request.method == 'GET':
+        projects = Project.objects.all()
+        serializer = PlistSerializer(projects, many=True)
+        sdata = serializer.data
+        print(projects)
+        print(type(projects))
+        jr = JsonResponse(sdata, safe=False)
+        return jr
 
 class BundleViewSet(viewsets.ModelViewSet):
     queryset = Bundle.objects.all()

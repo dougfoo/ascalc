@@ -23,7 +23,7 @@ export default function BundleTable(props) {
       <Table className={classes.table} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <TableCell align="Left">Name</TableCell>
+            <TableCell align="left">Name</TableCell>
             <TableCell align="right">Size</TableCell>
             <TableCell align="right">Months</TableCell>
           </TableRow>

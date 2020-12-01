@@ -23,7 +23,7 @@ export default function DenseTable(props) {
       <Table className={classes.table} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <TableCell align="Left">Role</TableCell>
+            <TableCell align="left">Role</TableCell>
             <TableCell align="right">Per Diem</TableCell>
             <TableCell align="right">Title</TableCell>
           </TableRow>

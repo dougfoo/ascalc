@@ -107,7 +107,21 @@ class Main extends Component {
     asdata: [],
     asdata2: [],
     asdata3: [],
-    dailyTrend: []
+    forecastData: []
+  };
+
+  flatten(data) {
+    let arr = [];
+    for (let i = 0; i < data.length; i++) {
+      let obj = { start: data[i].start_date, months: data[i].bundle.months, proj: data[i].name };
+      // loop through bundles
+      for (let j = 0; j < data[i].bundle.members.length; j++) {
+        let bundle= data[i].bundle.members[j];
+        obj[bundle.role] = bundle.allocation;
+      }
+      arr.push(obj);
+    }
+    return arr;
   };
 
   openDialog = event => {
@@ -153,6 +167,12 @@ class Main extends Component {
       console.log(data);
       this.setState({ ...this.state, asdata3: data })
     });
+    fetch("http://localhost:8000/calcapp/projects/")
+    .then(res => res.json())
+    .then(data => {
+      console.log(this.flatten(data));
+      this.setState({ ...this.state, forecastData: this.flatten(data)}) 
+      });
   }
 
   render() {
@@ -194,33 +214,35 @@ class Main extends Component {
                     <div>
                       <div className={classes.box}>
                         <Typography color="secondary" gutterBottom>
-                          Forecast Utilization
+                          Utilization
                         </Typography>
                       </div>
                       <div>
                         <ResponsiveContainer width="99%" height={225}>
-                          <LineChart width={600} height={300} data={this.state.dailyTrend}
+                          <LineChart width={600} height={300} data={this.state.forecastData}
                             margin={{
                               top: 5, right: 5, left: 5, bottom: 5,
                             }}
                           >
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis orientation="right"/>
+                            <XAxis dataKey="start" />
+                            <YAxis/>
+                            <Line type="monotone" dataKey="QB_DE" stroke="#8884d8"  />
+                            <Line type="monotone" dataKey="Sr AaaS" stroke="#ff3344" />
                             <Tooltip />
                             <Legend />
-                            <Line type="monotone" dataKey="Tokyo" stroke="#8884d8" activeDot={{ r: 8 }} />
-                            <Line type="monotone" dataKey="7dayAvg" stroke="#ff3344" dot={false} activeDot={false} />
+                            {/* <Line type="monotone" dataKey="name" stroke="#8884d8" activeDot={{ r: 8 }} />
+                            <Line type="monotone" dataKey="bundle.months" stroke="#ff3344" dot={false} activeDot={false} /> */}
                           </LineChart>                            
                         </ResponsiveContainer>
-                        <FormControl component="fieldset">
+                        {/* <FormControl component="fieldset">
                           <FormLabel component="legend">Timeframe</FormLabel>
                           <RadioGroup name="tf" value={this.state.chartscope} onChange={this.handleChange} row >
                             <FormControlLabel value="all" control={<Radio />} label="All" />
                             <FormControlLabel value="3mo" control={<Radio />} label="3 Months" />
                             <FormControlLabel value="12mo" control={<Radio />} label="12 Months " />
                           </RadioGroup>
-                        </FormControl>
+                        </FormControl> */}
                       </div>
                     </div>
                   </Paper>
