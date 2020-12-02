@@ -18,7 +18,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
 import {
-   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
+   BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
 } from 'recharts';
 
 const backgroundShape = '</>';
@@ -110,7 +110,57 @@ class Main extends Component {
     forecastData: []
   };
 
-  flatten(data) {
+  // input struct is:  [  {
+  //  "name": "ScaleOutBeta",
+  //  "start_date": "2020-06-01",
+  //  "bundle": {
+  //     "name": "ScaleOutMVP",
+  //     "size": "S",
+  //     "months": 3,
+  //     "members": [{
+  //             "role": "AP",
+  //             "title": "AP",
+  //             "perdiem": 250000,
+  //             "allocation": 0.1
+  //         },]
+  //   }]
+  // final struct to be:  [ {role: AP, projA: 0.5, projB:0.7}, {role: EM, projB:0.5, projC:0.3}]
+  flattenByTitle(data) {
+    console.log('flattenBy:' + JSON.stringify(data));
+
+    let m = new Map();
+    for (let i=0; i< data.length; i++) {
+      for (let j=0; j< data[i].bundle.members.length; j++) {
+         let memb = data[i].bundle.members[j];
+         if (m[memb.role] != null) {  // why doesn't m.has(memb.role) work ?
+           let k = data[i].name;
+           let v = memb.allocation;
+           m[memb.role][k] = (m[memb.role][k] == null ? 0 : m[memb.role][k]) + v;
+        }
+        else {
+          let k = data[i].name;
+          let v = memb.allocation;
+          m[memb.role] = new Map();
+          m[memb.role][k] = v;   // i found very tricky subtlty map.set(k,v) vs map[k]=v makes prop vs map (Object.forEach)
+        }
+      }
+    }
+ 
+    let arr = [];
+    Object.keys(m).forEach(k=> { 
+      let obj = { role: k };
+      let v = m[k];
+ 
+      Object.keys(v).forEach(j=> {
+        obj[j] = v[j];
+      });
+      arr.push(obj);
+    });
+
+    return arr;
+  };
+
+  groupByProject(data) {
     let arr = [];
     for (let i = 0; i < data.length; i++) {
       let obj = { start: data[i].start_date, months: data[i].bundle.months, proj: data[i].name };
@@ -170,8 +220,7 @@ class Main extends Component {
     fetch("http://localhost:8000/calcapp/projects/")
     .then(res => res.json())
     .then(data => {
-      console.log(this.flatten(data));
-      this.setState({ ...this.state, forecastData: this.flatten(data)}) 
+      this.setState({ ...this.state, forecastData: data}) 
       });
   }
 
@@ -214,26 +263,62 @@ class Main extends Component {
                     <div>
                       <div className={classes.box}>
                         <Typography color="secondary" gutterBottom>
-                          Utilization
+                          Utilization by Role
                         </Typography>
                       </div>
                       <div>
                         <ResponsiveContainer width="99%" height={225}>
-                          <LineChart width={600} height={300} data={this.state.forecastData}
-                            margin={{
-                              top: 5, right: 5, left: 5, bottom: 5,
-                            }}
-                          >
+                          <BarChart width={600} height={300} data={this.flattenByTitle(this.state.forecastData)}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="start" />
+                            <XAxis dataKey="role" />
                             <YAxis/>
-                            <Line type="monotone" dataKey="QB_DE" stroke="#8884d8"  />
-                            <Line type="monotone" dataKey="Sr AaaS" stroke="#ff3344" />
+                            <Bar type="monotone" dataKey="ScaleOutBeta" fill="red"  />
+                            <Bar type="monotone" dataKey="OpSupportForMegaBank" fill="orange"  />
+                            <Bar type="monotone" dataKey="ScaleOutForXYZ" fill="green" />
+                            {/* <Bar type="monotone" dataKey="Jr AaaS" fill="blue" />
+                            <Bar type="monotone" dataKey="AEM" fill="brown" />
+                            <Bar type="monotone" dataKey="AP" fill="cyan" /> */}
                             <Tooltip />
                             <Legend />
-                            {/* <Line type="monotone" dataKey="name" stroke="#8884d8" activeDot={{ r: 8 }} />
-                            <Line type="monotone" dataKey="bundle.months" stroke="#ff3344" dot={false} activeDot={false} /> */}
-                          </LineChart>                            
+                          </BarChart>                            
+                        </ResponsiveContainer>
+                        {/* <FormControl component="fieldset">
+                          <FormLabel component="legend">Timeframe</FormLabel>
+                          <RadioGroup name="tf" value={this.state.chartscope} onChange={this.handleChange} row >
+                            <FormControlLabel value="all" control={<Radio />} label="All" />
+                            <FormControlLabel value="3mo" control={<Radio />} label="3 Months" />
+                            <FormControlLabel value="12mo" control={<Radio />} label="12 Months " />
+                          </RadioGroup>
+                        </FormControl> */}
+                      </div>
+                    </div>
+                  </Paper>
+                </Grid>
+              </Grid>
+              <Grid container item xs={12}>
+                <Grid item xs={12}>
+                  <Paper className={classes.paper}>
+                    <div>
+                      <div className={classes.box}>
+                        <Typography color="secondary" gutterBottom>
+                          Utilization by Project
+                        </Typography>
+                      </div>
+                      <div>
+                        <ResponsiveContainer width="99%" height={225}>
+                          <BarChart width={600} height={300} data={this.groupByProject(this.state.forecastData)}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="proj" />
+                            <YAxis/>
+                            <Bar type="monotone" dataKey="QB_DE" fill="red"  />
+                            <Bar type="monotone" dataKey="QB_DS" fill="orange"  />
+                            <Bar type="monotone" dataKey="Sr AaaS" fill="green" />
+                            <Bar type="monotone" dataKey="Jr AaaS" fill="blue" />
+                            <Bar type="monotone" dataKey="AEM" fill="brown" />
+                            <Bar type="monotone" dataKey="AP" fill="cyan" />
+                            <Tooltip />
+                            <Legend />
+                          </BarChart>                            
                         </ResponsiveContainer>
                         {/* <FormControl component="fieldset">
                           <FormLabel component="legend">Timeframe</FormLabel>
